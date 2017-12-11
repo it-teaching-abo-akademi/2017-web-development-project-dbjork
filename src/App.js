@@ -1,46 +1,41 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import logo from './logo1.svg';
+import logo from './resources/logo1.svg';
 import './App.css';
 import './base.css';
 import  ModalPopup  from './components/ModalPopup';
-import  { type }  from './components/ModalPopup';
 import Portfolio from './components/Portfolio/Portfolio';
+import { connect } from 'react-redux';
+import { showPage, pages, createPortfolio } from "./actions";
 
-class App extends Component {
-    constructor(props){
-        super(props);
-        this.state = {
-            asksForPortfolioName: false,
-            portfolios: []
-        }
-        this.askForPortfolioName = this.askForPortfolioName.bind(this);
-        this.createPortfolio = this.createPortfolio.bind(this);
-        this.closePortfolioModal=this.closePortfolioModal.bind(this);
-    }
+class AppComponent
+    extends Component {
     render() {
+        var portfolios= this.props.portfolios.map(function(p){
+            return <Portfolio name={p.name} key={p.name} id={p.id} currency={p.currency}/>
+        });
+
         return (
             <div className="App">
                 <header className="App-header hflex">
                     <img src={logo} className="App-logo vcenter" alt="logo" />
-                    <button id="add-portfolio" className="vcenter" onClick={this.askForPortfolioName}>
+                    <button id="add-portfolio" className="vcenter" onClick={this.props.askForPortfolioName}>
                         Add new portfolio
                     </button>
                     <h1 className="App-title vcenter">Stock Portfolio Management System</h1>
                 </header>
                 <div className="contents">
-                        <ModalPopup show={this.state.asksForPortfolioName} onAcceptVal={this.createPortfolio}
-                                    msg= {"Please enter a name for your new portfolio"}
-                        header={"New Portfolio"} okText={'Create Portfolio'} onCancel={this.closePortfolioModal}>
-                            <input type={"text"} name={"returnValue"}></input>
-                        </ModalPopup>
+                    <ModalPopup show={this.props.asksForPortfolioName} onAcceptVal={this.props.createPortfolio}
+                                msg= {"Please enter a name for your new portfolio"}
+                                header={"New Portfolio"} okText={'Create Portfolio'} onCancel={this.props.closePortfolioModal}>
+                        <input type={"text"} name={"returnValue"}/>
+                    </ModalPopup>
                     <div>
-                        {this.state.portfolios}
+                        {portfolios}
                     </div>
                 </div>
                 <div className="footer">
                     <div>Icons made by
-                        <a href="http://www.freepik.com" title="Freepik">Freepik</a>
+                        <a href="http://www.freepik.com" title="Freepik">Freepik</a> and  <a href="https://www.flaticon.com/authors/roundicons" title="Roundicons">Roundicons</a>
                         from
                         <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
                         is licensed by
@@ -50,17 +45,24 @@ class App extends Component {
             </div>
         );
     }
-    askForPortfolioName(){
-        this.setState({ asksForPortfolioName: true});
-    }
-    createPortfolio(newPortfolio){
-        this.setState({asksForPortfolioName: false});
-        this.state.portfolios.push(<Portfolio name={newPortfolio.returnValue} key={newPortfolio.returnValue}/>);
-    }
-    closePortfolioModal(){
-        this.setState({asksForPortfolioName:false});
-    }
-
 }
 
+const mapStateToProps = state => {
+    return {
+        asksForPortfolioName: state.uiReducers.visiblePage===pages.SHOW_ASK_P_NAME,
+        portfolios: state.dataReducers.portfolio.portfolios
+    }
+};
+const mapDispatchToProps = dispatch => {
+    return {
+        askForPortfolioName: () => { dispatch(showPage(pages.SHOW_ASK_P_NAME))},
+        closePortfolioModal: () => { dispatch(showPage(pages.SHOW_PORTFOLIOS))},
+        createPortfolio: (newPortfolio) => { dispatch(createPortfolio(newPortfolio.returnValue))}
+    }
+};
+
+const App = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(AppComponent);
 export default App;

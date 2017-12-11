@@ -2,23 +2,15 @@ import React, { Component } from 'react';
 import HeaderRow from './components/HeaderRow';
 import StockRow from "./components/StockRow";
 import './stocklist.css';
+import { connect } from 'react-redux';
 
 
-class StockList extends Component{
-
-    constructor(props){
-        super(props);
-        this.state = {
-            listItems: []
-        }
-    }
+class StockListComponent extends Component{
 
     render() {
-        var listItems=React.Children.map(this.state.listItems, (stockrow) =>
+        var listItems=this.props.stockList.map((stockrow) =>
         {
-            return React.cloneElement(stockrow,{
-                ref: "sr_"+stockrow.props.name
-        });
+            return <StockRow name={stockrow.symbol} uVal={stockrow.value} totalValue={stockrow.totalValue} quantity={stockrow.amount}  key={stockrow.symbol}/>
         });
         return (
             <div className="stocklist">
@@ -29,11 +21,23 @@ class StockList extends Component{
             </div>
         );
     }
-
-    addItem(name, quantity){
-        this.state.listItems.push(<StockRow name={name} uVal={"0"} totalValue={"0"} quantity={quantity}  key={name}/>);
-        this.setState(this.state);
-    }
 }
 
+const mapStateToProps = (state, ownProps) => {
+    if (state) {
+        let portfolio = state.dataReducers.portfolio.portfolios.find(function (p) {
+            return p.id === ownProps.pId;
+        });
+    return {stockList:portfolio.stocks};
+    }
+    return null;
+}
+const mapDispatchToProps = state => {
+    return {};
+}
+
+const StockList = connect(
+    mapStateToProps,
+    null
+)(StockListComponent);
 export default StockList;

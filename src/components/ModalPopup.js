@@ -12,7 +12,7 @@ class ModalPopup extends Component {
 
     constructor(props){
         super(props);
-        this.state={};
+        this.state = {pId:this.props.pId};
         this.handleChange=this.handleChange.bind(this);
         this.accept=this.accept.bind(this);
     }
@@ -86,6 +86,7 @@ class ModalPopup extends Component {
     }
     accept(){
         this.props.onAcceptVal(this.state);
+        this.props.onCancel();
     }
 
 }
