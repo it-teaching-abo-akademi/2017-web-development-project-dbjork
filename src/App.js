@@ -5,31 +5,40 @@ import './base.css';
 import  ModalPopup  from './components/ModalPopup';
 import Portfolio from './components/Portfolio/Portfolio';
 import { connect } from 'react-redux';
-import { showPage, pages, createPortfolio } from "./actions";
+import {showPage, pages, createPortfolio, deletePortfolio} from "./actions";
 
 class AppComponent
     extends Component {
     render() {
+        const deleteFunc=this.props.deletePortfolio
         var portfolios= this.props.portfolios.map(function(p){
-            return <Portfolio name={p.name} key={p.name} id={p.id} currency={p.currency}/>
+            return <Portfolio name={p.name} key={p.name} id={p.id} currency={p.currency} onDelete={deleteFunc}/>
         });
-
+        this.props.error && alert(this.props.error.errorMessage + "\n" + this.props.error.detailMessage + "\n" + (this.props.error.source['Error Message'] || ""));
         return (
             <div className="App">
                 <header className="App-header hflex">
-                    <img src={logo} className="App-logo vcenter" alt="logo" />
-                    <button id="add-portfolio" className="vcenter" onClick={this.props.askForPortfolioName}>
-                        Add new portfolio
-                    </button>
-                    <h1 className="App-title vcenter">Stock Portfolio Management System</h1>
+                    <div className="logo-div">
+                        <img src={logo} className="App-logo vcenter" alt="logo" />
+                    </div>
+                    <div className="hflex add-div">
+                        <button id="add-portfolio" className="vcenter" onClick={this.props.askForPortfolioName}>
+                            Add new portfolio
+                        </button>
+                        <h1 className="App-title vcenter">Stock Portfolio Management System</h1>
+                    </div>
                 </header>
                 <div className="contents">
-                    <ModalPopup show={this.props.asksForPortfolioName} onAcceptVal={this.props.createPortfolio}
-                                msg= {"Please enter a name for your new portfolio"}
-                                header={"New Portfolio"} okText={'Create Portfolio'} onCancel={this.props.closePortfolioModal}>
-                        <input type={"text"} name={"returnValue"}/>
-                    </ModalPopup>
                     <div>
+
+                        <ModalPopup show={this.props.asksForPortfolioName} onAcceptVal={this.props.createPortfolio}
+                                    msg= {"Please enter a name for your new portfolio"}
+                                    header={"New Portfolio"} okText={'Create Portfolio'} onCancel={this.props.closePortfolioModal}>
+                            <div className="hflex">
+                                <div className="label" style={{minWidth:"6ch"}}>Name:</div>
+                                <input type={"text"} name={"returnValue"} maxLength={32}/>
+                            </div>
+                        </ModalPopup>
                         {portfolios}
                     </div>
                 </div>
@@ -50,14 +59,16 @@ class AppComponent
 const mapStateToProps = state => {
     return {
         asksForPortfolioName: state.uiReducers.visiblePage===pages.SHOW_ASK_P_NAME,
-        portfolios: state.dataReducers.portfolio.portfolios
+        portfolios: state.dataReducers.portfolio.portfolios,
+        error: state.dataReducers.current.error
     }
 };
 const mapDispatchToProps = dispatch => {
     return {
         askForPortfolioName: () => { dispatch(showPage(pages.SHOW_ASK_P_NAME))},
         closePortfolioModal: () => { dispatch(showPage(pages.SHOW_PORTFOLIOS))},
-        createPortfolio: (newPortfolio) => { dispatch(createPortfolio(newPortfolio.returnValue))}
+        createPortfolio: (newPortfolio) => { dispatch(createPortfolio(newPortfolio.returnValue))},
+        deletePortfolio: (portfolioId) => { window.confirm("This will delete this portfolio. The action can not be undone\n Are you certain?") && dispatch(deletePortfolio(portfolioId))}
     }
 };
 

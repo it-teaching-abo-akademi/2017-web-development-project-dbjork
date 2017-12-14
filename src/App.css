@@ -4,16 +4,15 @@
 }
 
 .App-logo {
-  height: 3em;
-  float:left;
-  padding:0.5em;
+  height:2.6em;
+  margin-right:0.3em;
 }
 
 .App-header {
   background-color: #222;
-  height: 6em;
   padding: 2em;
   color: white;
+  width:100%;
 }
 
 #add-portfolio::before {
@@ -28,59 +27,64 @@
 }
 #add-portfolio {
   position:relative;
-  margin-left:0.2em;
+  margin-right:auto;
+  margin-left:0;
   padding-left:40px;
-  float:left;
+  align-self: flex-start;
+  z-index:10;
   /*  box-shadow: 0 5px #006cc0;*/
 }
 .App-title {
-  position:absolute;
+  font-size: 1.2em;
+  margin:auto;
+  flex-grow:1;
+}
+
+.contents {
+  padding-bottom:3em;
+  display:inline-block;
   width:100%;
-  font-size: 1.5em;
 }
 
 .content-row {
-    align-content:stretch;
+  align-content:stretch;
 }
 .footer {
   position:fixed;
-  bottom:3px;
+  bottom:0;
   background-color:#222;
   width:100%;
 }
 
 .footer * {
-  margin:auto;
   font-size:80%;
   align-content:baseline;
   color:#aaa;
   padding:0.3em;
 }
-/*
-@media (max-width:1007px){
-  .App-title {
-    top:0;
-    font-size:1em;
-    position:absolute;
-  }
-  .button {
-    margin-top:3em;
-  }
-  #add-portfolio {
-    margin-top:0.6em;
-    float: unset;
-    margin-right:auto;
-    margin-left:unset;
-  }
 
+.add-div {
+  display:flex;
+  flex-wrap:wrap-reverse;
+  margin:auto;
+  flex:1 1;
 }
-@media (max-width:360px){
-  .App-logo {
-    display:none;
+.logo-div {
+  flex:0 0 60px;
+}
+@media (max-width:340px) {
+  .App-title {
+    align-self:center;
   }
+}
 
+@media (max-width:443px) {
+  .App-header {
+    padding:0.3em;
+  }
+}
+@media (max-width:728px) {
   #add-portfolio {
-    margin-top:unset;
+      margin:auto;
   }
-}*/
-
+}

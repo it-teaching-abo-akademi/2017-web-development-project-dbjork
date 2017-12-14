@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import './modalpopup.css';
 
 
 
@@ -21,33 +23,17 @@ class ModalPopup extends Component {
         if (!this.props.show){
             return null;
         }
-        const backdropStyle = {
-            position: 'fixed',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-            backgroundColor: 'rgba(0,0,0,0.3)',
-            padding: 50
-        };
 
         // The modal "window"
         const modalStyle = {
-            backgroundColor: '#fff',
-            borderRadius: 5,
-            maxWidth: 500,
-            minHeight: 300,
-            margin: '0 auto',
-            padding: 4
+            maxWidth: this.props.maxWidth,
+            minHeight: this.props.minHeight,
         };
-        const closeBtnStyle = {
-            position:'relative',
-            float:'right',
-            right:'2px',
-            top:'2px'
-        }
         const contentsStyle = {
             padding:28
+        }
+        const headerStyle= {
+            flexGrow:1
         }
         const fieldStyle = {
             padding:6,
@@ -62,16 +48,16 @@ class ModalPopup extends Component {
         });
 
         return (
-            <div className='backdrop' style={backdropStyle}>
+            <div className='backdrop'>
                 <div className='modal' style={modalStyle}>
-                    <div className='closeBtn' style={closeBtnStyle} onClick={this.props.onCancel}>X</div>
+                    <div className='hflex'>
+                        <div style={headerStyle}>{this.props.header}</div>
+                        <div className='close-btn'  onClick={this.props.onCancel}>X</div>
+                    </div>
                     <div style={contentsStyle}>
-                        <div className='hflex'>
-                            <div style={fieldStyle}>{this.props.header}</div>
-                        </div>
                         <div style={fieldStyle}>{this.props.msg}</div>
                         {textFields}
-                        <div className="buttonrow hflex" style={fieldStyle}>
+                        <div className="button-row hflex" >
                             <button onClick={this.props.onCancel}>Cancel</button>
                             <button onClick={this.accept}>{this.props.okText}</button>
                         </div>
@@ -91,6 +77,19 @@ class ModalPopup extends Component {
 
 }
 
-ModalPopup.defaultProps =  {okText: "OK"};
+ModalPopup.propTypes = {
+    header:PropTypes.string.isRequired,
+    msg:PropTypes.string.isRequired,
+    minHeight: PropTypes.number,
+    maxWidth:PropTypes.number,
+    onCancel:PropTypes.func.isRequired,
+    okText:PropTypes.string,
+    onAcceptVal: PropTypes.func.isRequired
+}
+ModalPopup.defaultProps =  {
+    okText: "OK",
+    maxWidth:500,
+    minHeight:300
+};
 
 export default ModalPopup;

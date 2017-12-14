@@ -4,34 +4,17 @@ import PortfolioHeader from  "./components/PortfolioHeader";
 import StockList from "./components/StockList/StockList";
 import Toolbar from "./components/Toolbar";
 import ModalPopup from "../ModalPopup";
-import {addStock, pages, showPage,changeCurrency } from "../../actions";
+import {addStock, pages, showPage,fetchCurrency, deleteSelectedStock } from "../../actions";
 import {connect} from "react-redux";
+import PropTypes from 'prop-types';
 
 class PortfolioComponent extends Component {
-/*    constructor(props){
-        super(props);
-        this.state={
-            asksForTicker:false
-        }
-        this.addStock = this.addStock.bind(this);
-        this.closeStockModal = this.closeStockModal.bind(this);
-        this.handleAddStock = this.handleAddStock.bind(this);
-        this.handlePerfGraph = this.handlePerfGraph.bind(this);
-        this.removeSelected = this.removeSelected.bind(this);
-    }*/
     render() {
-        const closeBtnStyle = {
-            position:'relative',
-            float:'right',
-            right:'2px',
-            top:'2px'
-        }
         return (
             <div className='portfolio'>
-                <div className={'closeBtn'} style={closeBtnStyle}>X</div>
-                <div className="vbox">
-                    <PortfolioHeader pId={this.props.id} name={this.props.name} currency={this.props.currency} onCurrencyChange={this.props.handleCurrencyChange}/>
-                    <StockList ref={"sl_"+this.props.name} pId={this.props.id}/>
+                <div className="vflex">
+                    <PortfolioHeader pId={this.props.id} name={this.props.name} currency={this.props.currency} onDelete={this.props.onDelete} onCurrencyChange={this.props.handleCurrencyChange}/>
+                    <StockList ref={"sl_"+this.props.name} pId={this.props.id} rate={this.props.currency==="EUR"?this.props.exchangeRateUSD:1}/>
                     <Toolbar onAddStock={this.props.handleAddStock} onPerfGraph={this.props.handlePerfGraph} onRemove={this.props.removeSelected}/>
                 </div>
                 <ModalPopup show={this.props.asksForTicker} onAcceptVal={this.props.addStock}
@@ -39,8 +22,8 @@ class PortfolioComponent extends Component {
                             header={"New stock"} okText={'Add stock'} onCancel={this.props.closeStockModal}
                             pId={this.props.id}>
                     <div className="vflex">
-                        <div className="hflex"><div className="label">Ticker:</div><input type={"text"} name={"symbol"} /></div>
-                        <div className="hflex"><div className="label">Amount:</div><input type={"text"} name={"amount"} /></div>
+                        <div className="hflex"><div className="label" style={{minWidth:"7ch"}}>Ticker:</div><input type={"text"} name={"symbol"} /></div>
+                        <div className="hflex"><div className="label" style={{minWidth:"7ch"}}>Amount:</div><input type={"text"} name={"amount"} /></div>
                     </div>
                 </ModalPopup>
             </div>
@@ -51,22 +34,33 @@ class PortfolioComponent extends Component {
 
 const mapStateToProps = (state, ownProps) => {
     return {
-        asksForTicker: state.uiReducers.visiblePage===pages.SHOW_ASK_T_NAME && state.uiReducers.requester===ownProps.id
+        asksForTicker: state.uiReducers.visiblePage===pages.SHOW_ASK_T_NAME && state.uiReducers.requester===ownProps.id,
+        exchangeRateUSD: state.dataReducers.portfolio.exchangeRate,
+        exchangeRateFetched: state.dataReducers.current.e_rate_last_updated
     }
 };
 
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        handleAddStock: () => { dispatch(showPage(pages.SHOW_ASK_T_NAME,ownProps.id))},
+        handleAddStock: () =>  dispatch(showPage(pages.SHOW_ASK_T_NAME,ownProps.id)),
+        removeSelected: () => dispatch (deleteSelectedStock(ownProps.id)),
         closeStockModal: () => { dispatch(showPage(pages.SHOW_PORTFOLIOS))},
         addStock: (stock) => { dispatch(addStock(stock.pId, stock.symbol, stock.amount))},
-        handleCurrencyChange: (e) => { e.target.value!==ownProps.currency?dispatch(changeCurrency(ownProps.id, e.target.value)):null}
+        handleCurrencyChange: (e) => { e.target.value!==ownProps.currency?dispatch(fetchCurrency(ownProps.id, e.target.value, Date.now()-ownProps.exchangeRateFetched>7200000)):null},
     }
 };
-
 
 const Portfolio = connect(
     mapStateToProps,
     mapDispatchToProps
 )(PortfolioComponent);
+
+Portfolio.propTypes = {
+    name:PropTypes.string.isRequired,
+    id:PropTypes.number.isRequired,
+    currency: PropTypes.string.isRequired,
+    onDelete:PropTypes.func.isRequired
+
+}
+
 export default Portfolio;

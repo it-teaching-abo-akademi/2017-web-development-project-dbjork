@@ -1,0 +1,45 @@
+.backdrop {
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    background: rgba(0,0,0,0.3);
+    padding:50px;
+    z-index:100;
+}
+div {
+    flex-wrap:wrap;
+}
+input {
+    flex-grow:1;
+    flex-shrink:0.7;
+}
+.label {
+    align-self:baseline;
+    flex-grow:-1;
+    flex-shrink: 1;
+    text-align:left;
+}
+.modal {
+    background: #fff;
+    border-radius: 10px;
+    min-width:260px;
+    margin: 0 auto;
+    padding: 4px;
+};
+.close-btn {
+    position:relative;
+    float:right;
+    right:2px;
+    top:2px;
+}
+.button-row {
+   margin-top:auto;
+    margin-bottom:2em;
+    padding-top:1em;
+    justify-content:flex-end;
+}
+button:nth-child(2){
+    margin-left:2em;
+}

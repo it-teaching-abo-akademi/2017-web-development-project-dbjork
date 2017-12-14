@@ -2,9 +2,87 @@
     float:left;
     width:45%;
     min-width:415px;
-    height:30%;
-    padding:15px;
     margin:2%;
-    display:inline-block;
+    border-radius:12px;
     box-shadow: 6px 8px rgba(102, 119, 136, 0.03), 0 1px 2px rgba(102, 119, 136, 0.3), 0 8px 12px rgba(58, 193, 203, 0.1);
+}
+.close-btn {
+    margin-top:0.1em;
+    margin-right:0.1em;
+}
+.portfolio-name {
+    font-weight: bold;
+    color:#eee;
+    flex-grow: 1;
+}
+.p-header {
+    flex-wrap:wrap;
+}
+.toolbar {
+    margin:0.2em 1em 1em 1em;
+}
+.toolbar button {
+    padding:0.4em 0.8em;
+    font-size:80%;
+}
+toolbar button:nth-child(1){
+    margin-right:auto;
+    margin-left:0.3em;
+}
+toolbar button:nth-child(3){
+    margin-right:0.5em;
+    margin-left:auto;
+}
+.load-icon {
+    animation-name: load-animation;
+    animation-iteration-count: infinite;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+}
+.title-pane {
+
+    background:linear-gradient(to right, #000000 80%, rgba(241, 243, 245, 0));
+    width:100%;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding:0.2em;
+}
+
+@keyframes load-animation {
+    100% {-moz-transform: rotate(360deg);}
+    100% {-webkit-transform: rotate(360deg);}
+    100% {transform: rotate(360deg);}
+    
+}
+/*.p-header::before {*/
+    /*content: '';*/
+    /*position:relative;*/
+    /*margin-right:-2.3vw;*/
+    /*margin-left:-2vw;*/
+    /*width:120%;*/
+    /*height:40px;*/
+    /*border-top-left-radius: 12px;*/
+    /*border-top-right-radius: 12px;*/
+    /*!*overflow: hidden;*!*/
+    /*background:linear-gradient(to right, #000000 80%, rgba(241, 243, 245, 0));*/
+    /*!*top:-30px;*!*/
+    /*!*transform: translateY(2em);*!*/
+/*}*/
+@media (max-width:420px) {
+    .p-header::before {
+        /*width:100%;*/
+        /*margin-left:-2.5%;*/
+    }
+    .portfolio-name {
+        font-size:90%;
+    }
+    .portfolio {
+        width: 95%;
+        min-width: 200px;
+        height: 30%;
+        /*display: inline-block;*/
+        /*right:1vw;*/
+        margin-top:1vw;
+        box-shadow: 6px 8px rgba(102, 119, 136, 0.03), 0 1px 2px rgba(102, 119, 136, 0.3), 0 8px 12px rgba(58, 193, 203, 0.1);
+    }
 }

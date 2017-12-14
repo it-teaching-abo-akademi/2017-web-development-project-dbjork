@@ -4,7 +4,7 @@ class Toolbar extends Component {
 
     render() {
         return (
-            <div className="toolbar">
+            <div className="toolbar hflex">
                 <button onClick={this.props.onAddStock}>Add stock</button>
                 <button onClick={this.props.onPerfGraph}>Perf graph</button>
                 <button onClick={this.props.onRemove} >Remove selected</button>
