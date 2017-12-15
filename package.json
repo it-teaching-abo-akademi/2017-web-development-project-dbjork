@@ -2,7 +2,7 @@
   "name": "projectwork",
   "version": "0.1.0",
   "private": true,
-  "homepage:": "https://it-teaching-abo-akademi.github.io/2017-web-development-project-dbjork/",
+  "homepage": "https://it-teaching-abo-akademi.github.io/2017-web-development-project-dbjork/",
   "dependencies": {
     "gh-pages": "^1.1.0",
     "randomcolor": "^0.5.3",
