@@ -147,7 +147,8 @@ const portfolio = (state = initialState, action) => {
 const current = (state = {
     isFetching: 0,
     didInvalidate: false,
-    items: []
+    items: [],
+    e_rate_last_updated:0
 }, action) => {
     switch (action.type) {
         case REQUEST_CURRENT:

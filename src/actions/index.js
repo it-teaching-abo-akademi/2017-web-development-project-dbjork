@@ -89,9 +89,9 @@ export const receiveCurrent = (stock, json) => dispatch => {
     try {
         const interval = json["Meta Data"]["4. Interval"];
         const tSeries = json["Time Series ("+ interval + ")"];
-        const value = tSeries[Object.keys(tSeries)[0]]["4. close"];
+        const value = tSeries[Object.keys(tSeries)[Object.keys(tSeries).length-1]]["4. close"];
         const totalValue = value * stock.amount;
-        const history = tSeries[Object.keys(tSeries)];
+        const history = tSeries;
         const stockWValues =  {
                 ...stock,
                 value,

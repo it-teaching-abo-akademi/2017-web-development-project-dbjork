@@ -39,13 +39,6 @@ class StockListComponent extends Component{
     }
 }
 const mapStateToProps = (state, ownProps) => {
-    if (state) {
-        let portfolio = state.dataReducers.portfolio.portfolios.find(function (p) {
-            return p.id === ownProps.pId;
-        });
-    return {stockList:portfolio.stocks};
-    }
-    return null;
 }
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
@@ -59,7 +52,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
 }
 
 const StockList = connect(
-    mapStateToProps,
+    null,
     mapDispatchToProps
 )(StockListComponent);
 export default StockList;
