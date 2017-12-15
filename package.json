@@ -2,15 +2,21 @@
   "name": "projectwork",
   "version": "0.1.0",
   "private": true,
+  "homepage:": "https://github.com/it-teaching-abo-akademi/2017-web-development-project-dbjork",
   "dependencies": {
+    "gh-pages": "^1.1.0",
+    "randomcolor": "^0.5.3",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "react-redux": "^5.0.6",
     "react-scripts": "1.0.17",
+    "recharts": "latest",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0"
   },
   "scripts": {
+    "predeploy":"npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
