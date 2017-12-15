@@ -5,10 +5,14 @@ import './base.css';
 import  ModalPopup  from './components/ModalPopup';
 import Portfolio from './components/Portfolio/Portfolio';
 import { connect } from 'react-redux';
-import {showPage, pages, createPortfolio, deletePortfolio} from "./actions";
+import {showPage, pages, createPortfolio, deletePortfolio, fetchCurrency} from "./actions";
 
 class AppComponent
     extends Component {
+    componentDidMount() {
+        this.props.fetchCurrencyExchangeValue();
+    }
+
     render() {
         const deleteFunc=this.props.deletePortfolio
         var portfolios= this.props.portfolios.map(function(p){
@@ -65,6 +69,7 @@ const mapStateToProps = state => {
 };
 const mapDispatchToProps = dispatch => {
     return {
+        fetchCurrencyExchangeValue: () => { dispatch(fetchCurrency(0,"USD",-1))},
         askForPortfolioName: () => { dispatch(showPage(pages.SHOW_ASK_P_NAME))},
         closePortfolioModal: () => { dispatch(showPage(pages.SHOW_PORTFOLIOS))},
         createPortfolio: (newPortfolio) => { dispatch(createPortfolio(newPortfolio.returnValue))},
