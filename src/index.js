@@ -9,6 +9,7 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 const STORE_KEY = 'smpsState';
+export const VERSION_STRING = "0.0.1";
 
 
 const loggerMiddleware = createLogger();
@@ -19,7 +20,16 @@ const loadState = () => {
         if (!(oldState)) {
             return undefined;
         }
-        return JSON.parse(oldState);
+        const stateObj= JSON.parse(oldState);
+        if (!stateObj.dataReducers.version || stateObj.dataReducers.version !== VERSION_STRING) {
+            alert("The format for storing your portfolios has changed. \nUnfortunately this means we can not" +
+                " read the stored portfolios back into the application. \nIf you by happenstance have chosen" +
+                " to rely on this application for your real world managing of stock portfolios please send" +
+                " me a note and I will do my best to avoid this inconvenience in the future.");
+            return undefined;
+
+        }
+        return stateObj;
     } catch (err) {
         return undefined;
     }
@@ -42,6 +52,7 @@ const saveState = (state) => {
     try {
         const saveableState = {
             dataReducers: {
+                version: VERSION_STRING,
                 portfolio: {
                     ...state.dataReducers.portfolio,
                     portfolios: state.dataReducers.portfolio.portfolios.map((portfolio) => {
