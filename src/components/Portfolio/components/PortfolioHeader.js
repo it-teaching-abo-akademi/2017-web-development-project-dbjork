@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import loading from "../../../resources/loading.svg";
+import settings from "../../../resources/settings.svg";
 import {connect} from "react-redux";
 
 class PortfolioHeaderComponent extends Component {
@@ -7,7 +8,7 @@ class PortfolioHeaderComponent extends Component {
     render() {
         const fsStyle = {
             border:"none",
-            marginLeft:"3em"
+            marginLeft:"1em"
         }
         const rbStyle = {
             padding:"5px",
@@ -15,15 +16,19 @@ class PortfolioHeaderComponent extends Component {
         }
         const iconStyle = {
             height:"1em",
-            display:this.props.loading?"flex":"none",
+            marginLeft:"0.5em",
+            marginRight:"auto"
+        }
+        const lIconStyle = {
+            ...iconStyle,
             marginRight:"0.5em",
             marginLeft:"auto",
+            display:this.props.loading?"flex":"none",
         }
         const dummyStyle = {
-            height:"1em",
+            ...iconStyle,
             display:this.props.loading?"none":"flex",
-            marginRight:"0.5em",
-            marginLeft:"auto",
+
         }
         const closeBtnStyle = {
             width:"22px",
@@ -40,11 +45,14 @@ class PortfolioHeaderComponent extends Component {
                     <div className={'close-btn'} style={closeBtnStyle} onClick={this.props.handleDelete}>X</div>
                 </div>
                 <div className="hflex fullwidth p-header" >
-                    <div><fieldset style={fsStyle} >
-                        Show in €<input type="radio" name={"currency"+this.props.pId} value={"EUR"} checked={this.props.currency==="EUR"} onClick={this.props.onCurrencyChange} style={rbStyle}/>
-                        Show in $<input type="radio" name={"currency"+this.props.pId} value={"USD"} checked={this.props.currency==="USD"} onClick={this.props.onCurrencyChange} />
-                    </fieldset></div>
-                    <img src={loading} style={iconStyle} className="vcenter load-icon"  alt="Updating..." />
+                    <img src={settings} className="vcenter" style={iconStyle} alt={"Settings"} onClick={this.props.showSettings}/>
+                    <div>
+                        <fieldset style={fsStyle} >
+                            Show in €<input type="radio" name={"currency"+this.props.pId} value={"EUR"} checked={this.props.currency==="EUR"} onClick={this.props.onCurrencyChange} style={rbStyle}/>
+                            Show in $<input type="radio" name={"currency"+this.props.pId} value={"USD"} checked={this.props.currency==="USD"} onClick={this.props.onCurrencyChange} />
+                        </fieldset>
+                    </div>
+                    <img src={loading} style={lIconStyle} className="vcenter load-icon"  alt="Updating..." />
                     <div style={dummyStyle} className="vcenter load-icon"  />
                 </div>
             </div>
@@ -54,7 +62,8 @@ class PortfolioHeaderComponent extends Component {
 }
 const mapDispatchToProps = (state, ownProps ) => {
     return {
-        handleDelete: () => ownProps.onDelete(ownProps.pId)
+        handleDelete: () => ownProps.onDelete(ownProps.pId),
+        showSettings: () => ownProps.onShowSettings(ownProps.pId)
     }
 };
 const mapStateToProps = (state, ownProps) => {

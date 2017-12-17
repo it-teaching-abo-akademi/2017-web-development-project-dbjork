@@ -1,0 +1,17 @@
+.rc-slider {
+    width:600px;
+    height:20px;
+}
+.rc-slider-mark-text {
+    padding-right:15px;
+    font-size: 95%;
+    transform: rotate(-90deg);
+    text-align: end;
+}
+.slider-container {
+    padding-bottom:40px;
+
+}
+.settings-container p {
+    text-align: left;
+}

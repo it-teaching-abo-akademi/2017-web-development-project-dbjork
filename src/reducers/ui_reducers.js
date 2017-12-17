@@ -2,7 +2,7 @@ import {pages, SET_VISIBLE_PAGE} from "../actions/ui_actions";
 import {CURRENCY_CHANGED} from "../actions";
 
 const initalState = {
-    visibilityFilter: pages.SHOW_PORTFOLIOS,
+    visiblePage: pages.SHOW_PORTFOLIOS,
     portfolios: []
 }
 

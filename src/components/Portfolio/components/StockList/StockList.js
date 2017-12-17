@@ -34,19 +34,9 @@ class StockListComponent extends Component{
             </div>
         );
     }
-    componentDidMount(){
-        this.props.fetchAllValues(this.props.stockList);
-    }
-}
-const mapStateToProps = (state, ownProps) => {
 }
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        fetchAllValues: (stockList) => {
-            stockList.forEach((stock) => {
-                dispatch(fetchCurrent(stock))
-            });
-        },
         selectStock: (stockId, selected) => dispatch(selectStock(ownProps.pId, stockId, selected))
     }
 }

@@ -11,13 +11,13 @@ import {
     CURRENCY_CHANGED,
     RECEIVE_ERROR,
     UPDATE_STOCK,
-    SELECT_STOCK, REQUEST_CURRENCY, RECEIVE_CURRENCY, CHANGE_RATE_USD_TO_EUR
+    SELECT_STOCK, REQUEST_CURRENCY, RECEIVE_CURRENCY, CHANGE_RATE_USD_TO_EUR, SAVE_SETTINGS
 } from "../actions";
 import { combineReducers } from 'redux';
 
 const initialState = {
     nextPortfolioId:0,
-    portfolios: []
+    portfolios: [],
 }
 
 const portfolio = (state = initialState, action) => {
@@ -34,7 +34,10 @@ const portfolio = (state = initialState, action) => {
                             id: ++state.nextPortfolioId,
                             currency: "EUR",
                             nextStockId:0,
-                            stocks: []
+                            stocks: [],
+                            settings: {
+                                frequency:3600000
+                            }
 
                         } ]
                 }:state;
@@ -137,6 +140,17 @@ const portfolio = (state = initialState, action) => {
             return {
                 ...state,
                 exchangeRate:action.rate
+            }
+        case SAVE_SETTINGS:
+            return {
+                ...state,
+                portfolios:
+                    state.portfolios.map((portfolio)=>{
+                        if (portfolio.id === action.pId) {
+                            return Object.assign({}, {...portfolio, settings:action.settings});
+                        }
+                        return portfolio;
+                    })
             }
         default:
             return state;
