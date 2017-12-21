@@ -244,6 +244,7 @@ export const receiveHistory = (stock, json, timeSeries) => dispatch => {
         }
         dispatch(updateHistory(stockWHistory));
     } catch (e) {
+        debugger;
         console.log(json);
         return dispatch(jsonError(stock,json))
     }
@@ -264,11 +265,15 @@ export const receiveCurrent = (stock, json, timeSeries) => dispatch => {
             totalValue,
             interval
         }
-        // If this is a new stock that does not belong to state, it has an id of 0, else update it.
-        return stock.id === 0 ? dispatch(createStock(stockWValues)):dispatch(updateStock(stockWValues));
+        // A fresh stock outside the state, will have an id of 0. If so create it
+        // (which will fetch the current value) then immediately fetch its history.
+        // If it already belongs to state update it instead.
+        return stock.id === 0 ? dispatch(createStock(stockWValues)).then((action) =>  dispatch(fetchHistory(action.stock,action.stock.portfolioId))):dispatch(updateStock(stockWValues));
+
     } catch (e) {
         // The fine API returns a valid json response even if the ticker is invalid :(
         // The best we are able to do is to catch it here and give a reasonable explanation.
+        debugger;
         console.log(json);
         return dispatch(jsonError(stock,json))
     }
@@ -311,9 +316,7 @@ export const addStock = (portfolioId, symbol, amount) => (dispatch) => {
         history:[]
     };
 
-    return Promise.all(
-        [dispatch(fetchCurrent(stock, portfolioId)),
-        dispatch(fetchHistory(stock,portfolioId))]);
+    return dispatch(fetchCurrent(stock, portfolioId));
 };
 
 export const deleteSelectedStock = (portfolioId) => {
@@ -332,11 +335,15 @@ export const selectStock = (portfolioId, stockId, selected) => {
         selected
     }
 }
-
-export const createStock = (stock) => ({
-    type: CREATE_STOCK,
-    stock
-});
+/* Return a promise so we can fetch the history immediately after creation */
+export const createStock = (stock) => dispatch => (
+     new Promise((resolve, reject) => {
+        resolve(dispatch({
+            type: CREATE_STOCK,
+            stock
+        }));
+    }));
+;
 
 export const saveSettings = (settings, pId) => ({
     type:SAVE_SETTINGS,
