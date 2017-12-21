@@ -1,3 +1,4 @@
+/* Combines the reducers into one main reducer */
 import { combineReducers } from 'redux';
 import dataReducers from './data_reducers';
 import uiReducers from './ui_reducers';

@@ -1,3 +1,6 @@
+/* StockList table styles
+ * Author Dan Björkgren 2017
+ */
 .table-row { /* Flexbox with items stretched */
     display:flex;
     flex-direction:row;

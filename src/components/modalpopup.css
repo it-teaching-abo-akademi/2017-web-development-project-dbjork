@@ -1,4 +1,7 @@
-.backdrop {
+/* Styling for the "modal" popups
+ * Author Dan Björkgren 2017
+ */
+.backdrop { /* Gray background that shades the screen and prevents clicking on elements under it*/
     position:fixed;
     top:0;
     bottom:0;
@@ -17,7 +20,7 @@ input {
 }
 .label {
     align-self:baseline;
-    flex-grow:-1;
+    flex-grow:0;
     flex-shrink: 1;
     text-align:left;
 }
@@ -27,7 +30,7 @@ input {
     min-width:260px;
     margin: 0 auto;
     padding: 4px;
-};
+}
 .close-btn {
     position:relative;
     float:right;

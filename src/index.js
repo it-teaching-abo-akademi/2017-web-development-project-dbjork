@@ -1,3 +1,12 @@
+/* "Landing page" javascript.
+ *
+ * Author: Dan Björkgren 40072, 2017
+ *
+ * Loads previously stored state from local storage on app startup
+ * and saves it whenever changed
+ * Uses redux to simplify handling of state and thunk middleware for asynchronous calls
+ * redux-logger is only used for debugging.
+ * Uses */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -9,18 +18,23 @@ import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 const STORE_KEY = 'smpsState';
-export const VERSION_STRING = "0.0.1";
+export const VERSION_STRING = "0.0.2";
 
-
+/*
+ Used for debugging, displays pre-action state, action and post-action
+ state for each dispatched action in the console.
+*/
 const loggerMiddleware = createLogger();
 
-const loadState = () => {
+const loadState = () => { //Read a previously stored state from local storage,
+                          // Returning undefined will let the reducers create a new state.
     try {
+        const jsonParser = require('moment-json-parser'); //Allows for parsing moment objects from JSON
         const oldState = localStorage.getItem(STORE_KEY);
-        if (!(oldState)) {
+        if (!oldState) { //No previous state, let the reducers create a new
             return undefined;
         }
-        const stateObj= JSON.parse(oldState);
+        const stateObj= jsonParser(oldState);
         if (!stateObj.dataReducers.version || stateObj.dataReducers.version !== VERSION_STRING) {
             alert("The format for storing your portfolios has changed. \nUnfortunately this means we can not" +
                 " read the stored portfolios back into the application. \nIf you by happenstance have chosen" +
@@ -50,7 +64,7 @@ const store = createStore(
 const saveState = (state) => {
 
     try {
-        const saveableState = {
+        const saveableState = { //We do not save all of the state, only the portfolio portion, without value data
             dataReducers: {
                 version: VERSION_STRING,
                 portfolio: {
@@ -76,7 +90,7 @@ const saveState = (state) => {
     } catch (err) { console.log(err)}
 };
 
-store.subscribe(() => {
+store.subscribe(() => { // Store the state whenever changed
     saveState(store.getState());
 })
 

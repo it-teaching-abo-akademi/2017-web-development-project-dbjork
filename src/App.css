@@ -1,3 +1,4 @@
+/* Main app window styling */
 .App {
   text-align: center;
   outline-style: none;
@@ -15,7 +16,7 @@
   width:100%;
 }
 
-#add-portfolio::before {
+#add-portfolio::before { //+sign on button
   position:absolute;
   left:0.25em;
   top:0.35em;

@@ -1,3 +1,11 @@
+/** Main app component.
+ * Displays a grid of "portfolios" two by two if space allows
+ * Allows for adding portfolios
+ *
+ * Author Dan Björkgren, 40072, 2017
+ *
+ * TODO: Add credits page
+ * */
 import React, { Component } from 'react';
 import logo from './resources/logo1.svg';
 import './App.css';
@@ -5,7 +13,7 @@ import './base.css';
 import  ModalPopup  from './components/ModalPopup';
 import Portfolio from './components/Portfolio/Portfolio';
 import { connect } from 'react-redux';
-import {showPage, pages, createPortfolio, deletePortfolio, fetchCurrency} from "./actions";
+import {showPage, pages, createPortfolio, deletePortfolio, fetchCurrency} from "./actions/data_actions";
 
 class AppComponent
     extends Component {
@@ -15,9 +23,10 @@ class AppComponent
 
     render() {
         const deleteFunc=this.props.deletePortfolio
-        var portfolios= this.props.portfolios.map(function(p){
+        const portfolios= this.props.portfolios.map(function(p){//Create a Portfolio component for every portfolio in the array
             return <Portfolio name={p.name} key={p.name} id={p.id} currency={p.currency} onDelete={deleteFunc}/>
         });
+        //TODO: change this to use the modal popup instead.
         this.props.error && alert(this.props.error.errorMessage + "\n" + this.props.error.detailMessage + "\n" + (this.props.error.source['Error Message'] || ""));
         return (
             <div className="App">
@@ -47,6 +56,7 @@ class AppComponent
                     </div>
                 </div>
                 <div className="footer">
+                    {/* TODO: Create a credits page and add a link to that instead */}
                     <div>Icons made by
                         <a href="http://www.freepik.com" title="Freepik">Freepik</a> and  <a href="https://www.flaticon.com/authors/roundicons" title="Roundicons">Roundicons</a>
                         from

@@ -1,9 +1,14 @@
+/* StockList component.
+ * Includes calculation of total value for the portfolio
+ * Author Dan Björkgren 2017
+ * TODO: Props type checking. List sorting that is hinted in the header.
+ * */
 import React, { Component } from 'react';
 import HeaderRow from './components/HeaderRow';
 import StockRow from "./components/StockRow";
 import './stocklist.css';
 import { connect } from 'react-redux';
-import { fetchCurrent, selectStock} from "../../../../actions";
+import { selectStock} from "../../../../actions/data_actions";
 
 
 class StockListComponent extends Component{
@@ -15,6 +20,7 @@ class StockListComponent extends Component{
         }
        const portfolioTotal = (this.props.rate*this.props.stockList.reduce((total, stock) => total+stock.totalValue,0))
            .toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2});
+        /* Create a row item for each stock */
         var listItems=this.props.stockList.map((stockrow) =>
         {
             return <StockRow stock={stockrow} key={stockrow.symbol} rate={this.props.rate} onSelectStock={this.props.selectStock}/>

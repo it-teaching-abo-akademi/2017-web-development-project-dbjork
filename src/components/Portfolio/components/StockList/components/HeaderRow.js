@@ -1,3 +1,7 @@
+/* Simple header row component for the StockList component
+*  Author: Dan Björkgren 2017
+*  TODO: List sorting that is hinted at by the arrows in the divs
+* */
 import React, { Component } from 'react';
 import './table.css';
 

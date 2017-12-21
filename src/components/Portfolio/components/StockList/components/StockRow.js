@@ -1,9 +1,15 @@
+/* This is a subcomponent of StockList. It represents
+ * a single stock. Allows the user to select that stock
+ * by means of a checkbox.
+ * Author Dan Björkgren 2017
+ * TODO: Props type checking
+ */
 import React, { Component } from 'react';
 import { connect } from  'react-redux';
 
 class StockRowComponent extends Component {
     render() {
-
+        /* Format the stock values */
         let lVal = (parseFloat(this.props.stock.value)*this.props.rate).toLocaleString(
             undefined, // use a string like 'en-US' to override browser locale
             { minimumFractionDigits: 2, maximumFractionDigits:2 }
@@ -27,7 +33,7 @@ class StockRowComponent extends Component {
                     <p>{totalVal}</p>
                 </div>
                 <div className="table-cell col5">
-                    <input type="checkbox" checked={this.props.stock.selected} onClick={this.props.handleSelection}></input>
+                    <input type="checkbox" checked={this.props.stock.selected} onClick={this.props.handleSelection}/>
                 </div>
             </div>
         );

@@ -1,3 +1,12 @@
+/* Fake "Modal" popup that covers the viewport and prevents clicking on items under it.
+ * This is a generic component that can be altered by adding children directly in jsx
+ * between the component start and end tags
+ * Author Dan Björkgren 2017, inspired (more or less copied) by this blog post by Dave Ceddia:
+ * https://daveceddia.com/open-modal-in-react/
+ *
+ * TODO: Use this for error and confirm messages instead of alert and confirm
+ *
+ * */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './modalpopup.css';
@@ -56,11 +65,13 @@ class ModalPopup extends Component {
                     </div>
                     <div style={contentsStyle}>
                         <div style={fieldStyle}>{this.props.msg}</div>
+                        <form  onSubmit={(e) => this.accept(e)}>
                         {textFields}
                         <div className="button-row hflex" >
-                            <button onClick={this.props.onCancel}>Cancel</button>
-                            <button onClick={this.accept}>{this.props.okText}</button>
+                            <button  type="button" onClick={this.props.onCancel}>Cancel</button>
+                            <button type="submit">{this.props.okText}</button>
                         </div>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -70,7 +81,9 @@ class ModalPopup extends Component {
         this.setState({[e.target.name]: e.target.value })
 
     }
-    accept(){
+    accept(e){
+
+        e.preventDefault();
         this.props.onAcceptVal(this.state);
         this.props.onCancel();
     }

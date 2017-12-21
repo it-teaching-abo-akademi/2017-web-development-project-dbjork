@@ -1,0 +1,25 @@
+/* Styling for the chart modal window.
+ * Author Dan Björkgren 2017
+ * TODO: There is a great deal to be said about the design of this modal, not happy with it
+ */
+.button-row {
+ justify-content: space-around;
+}
+.picker-field {
+    justify-content: space-evenly;
+    align-items: baseline;
+}
+.picker-field * {
+    margin:0.1em;
+}
+.picker-field input {
+    width:11ch;
+
+}
+.graph-container {
+    flex-wrap: nowrap;
+    width:100%;
+}
+.stock-selector {
+    align-items:flex-start;
+}

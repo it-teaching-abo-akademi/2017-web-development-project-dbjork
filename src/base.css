@@ -1,3 +1,4 @@
+/*Basic styling, inherited from earlier projects */
 * {
 	box-sizing:border-box;
 }
@@ -9,13 +10,13 @@ body * {
 button { /*blue buttons*/
 	padding: 7px 25px;
 	color:white;
-	background-color:#008CBA;
+	background-color:#008CBA; /*This color is actually quite questionable*/
 	border-radius:6px;
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 }
 button:disabled { /*gray buttons when disabled */
-	background-color:#555555;
+	background-color:#aaa;
 }
 button:focus {
 	/* Remove the ugly blue

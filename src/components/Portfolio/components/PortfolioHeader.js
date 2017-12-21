@@ -1,3 +1,8 @@
+/* Header component for the portfolio. Includes an icon that is shown
+ * during fetching of data from remote api. Also includes the delete portfolio
+ * button, title and the currency radio buttons
+ * Author Dan Björkgren 2017
+ * TODO: Props type checking */
 import React, { Component } from 'react';
 import loading from "../../../resources/loading.svg";
 import settings from "../../../resources/settings.svg";
@@ -53,6 +58,7 @@ class PortfolioHeaderComponent extends Component {
                         </fieldset>
                     </div>
                     <img src={loading} style={lIconStyle} className="vcenter load-icon"  alt="Updating..." />
+                    {/* Dummy div prevents elements moving around due to loading icon visibility */}
                     <div style={dummyStyle} className="vcenter load-icon"  />
                 </div>
             </div>
