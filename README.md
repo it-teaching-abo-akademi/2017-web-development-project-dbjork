@@ -1,9 +1,11 @@
-Stock Portfolio Management System.
+# Stock Portfolio Management System.
 
 Created by Dan Björkgren as final project for the course *Development of Interactive Web Applications*,
 Åbo Akademi University fall 2017.
 
-The app is a react app that lets users handle stock portfolios. (No trading included)
+Live demo: https://it-teaching-abo-akademi.github.io/2017-web-development-project-dbjork/
+
+A react app that lets users handle stock portfolios. (No trading included)
 
 Features:
 - Add up to 10 portfolios
@@ -44,6 +46,11 @@ Known flaws and compromises
 - The chosen date picker component is actually not to my liking
 - The chosen chart component has limits (or perhaps hidden functionality) regarding the layout. 
 Getting the chart window to display properly e.g. on small devices will require more work
+
+Know bugs:
+There is a bug in creating the chart data for a newly added stock.
+Workaround: reload the page and the graph should display properly
+
 
 Bear in mind that this is my first React project, it will reflect my current
 understanding of how react and redux are supposed to work. 
