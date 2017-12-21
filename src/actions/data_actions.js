@@ -4,7 +4,6 @@
  * would fit better in the ui-actions file)
  * Author: Dan Björkgren 2017
  * TODO: consider moving some of the more ui-related actions to ui_actions
- * TODO: implement automatic refreshing of current value
  */
 
 export * from './ui_actions';

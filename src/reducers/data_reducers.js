@@ -72,7 +72,6 @@ const portfolio = (state = initialState, action) => {
                             }
 
                         } ]
-                    //Fails silently if 11th portfolio is added. TODO:Should probably notify the user
                 }:state;
         case DELETE_PORTFOLIO:
             return {
@@ -86,14 +85,17 @@ const portfolio = (state = initialState, action) => {
             //TODO: Find an API to check the symbol for validity
             //TODO: Find an API that returns what stock exchange a stock is traded on. (Portfolios should not mix exchanges since the historical data returned differs)
             return action.checkTicker;
-        case CREATE_STOCK:  // TODO: Block additional copies of a stock, create a means to change amount instead
-            try {
+        case CREATE_STOCK:
                 return {
                     ...state,
                     portfolios: state.portfolios.map(function (portfolio) {
                         if (portfolio.id === action.stock.portfolioId) {
+                            const exists = portfolio.stocks.find((s)=>{ return s.symbol===action.stock.symbol});
+                            if (exists ){
+                                throw new Error("You can only add a stock once!\n(Delete and re-add if you want to change the amount")
+                            }
                             if (portfolio.stocks.length > 49) {
-                                throw new Error("Only 50 stocks allowed");
+                                throw new Error("Only 50 stocks allowed for each portfolio.\nAdd another portfolio if you need more");
                             }
                             return Object.assign({},
                                 portfolio, {
@@ -108,9 +110,6 @@ const portfolio = (state = initialState, action) => {
                         return portfolio;
                     })
                 };
-            } catch(err){ //This is probably because a 51st stock was added
-                return state;
-            }
         case UPDATE_STOCK:
         case UPDATE_HISTORY:
             return {
