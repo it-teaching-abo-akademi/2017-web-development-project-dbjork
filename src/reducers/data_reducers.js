@@ -29,7 +29,13 @@ import {
     RECEIVE_ERROR,
     UPDATE_STOCK,
     UPDATE_HISTORY,
-    SELECT_STOCK, REQUEST_CURRENCY, RECEIVE_CURRENCY, CHANGE_RATE_USD_TO_EUR, SAVE_SETTINGS, TIME_SERIES
+    SELECT_STOCK,
+    REQUEST_CURRENCY,
+    RECEIVE_CURRENCY,
+    CHANGE_RATE_USD_TO_EUR,
+    SAVE_SETTINGS,
+    TIME_SERIES,
+    CLEAR_ERROR
 } from "../actions/data_actions";
 import { combineReducers } from 'redux';
 
@@ -77,28 +83,34 @@ const portfolio = (state = initialState, action) => {
                 },[])
             };
         case CHECK_SYMBOL: //This is not used atm, Alphavantage has no api to check the validity of a symbol
-                            //TODO: Find an API to check the symbol for validity
-                            //TODO: Find an API that returns what stock exchange a stock is traded on. (Portfolios should not mix exchanges since the historical data returned differs)
+            //TODO: Find an API to check the symbol for validity
+            //TODO: Find an API that returns what stock exchange a stock is traded on. (Portfolios should not mix exchanges since the historical data returned differs)
             return action.checkTicker;
-        case CREATE_STOCK:  //TODO: Limit the number of stocks in a portfolio  to 50
-                            // TODO: Block additional copies of a stock, create a means to change amount instead
-            return {
-                ...state,
-                portfolios: state.portfolios.map(function(portfolio){
-                    if (portfolio.id===action.stock.portfolioId) {
-                        return Object.assign({},
-                            portfolio, {
-                                stocks: [...portfolio.stocks,
-                                    {
-                                        ...action.stock, //Append a new stock and assign it an id
-                                        id: ++portfolio.nextStockId,
-                                    }
-                                ]
-                            });
-                    }
-                    return portfolio;
-                })
-            };
+        case CREATE_STOCK:  // TODO: Block additional copies of a stock, create a means to change amount instead
+            try {
+                return {
+                    ...state,
+                    portfolios: state.portfolios.map(function (portfolio) {
+                        if (portfolio.id === action.stock.portfolioId) {
+                            if (portfolio.stocks.length > 49) {
+                                throw new Error("Only 50 stocks allowed");
+                            }
+                            return Object.assign({},
+                                portfolio, {
+                                    stocks: [...portfolio.stocks,
+                                        {
+                                            ...action.stock, //Append a new stock and assign it an id
+                                            id: ++portfolio.nextStockId,
+                                        }
+                                    ]
+                                });
+                        }
+                        return portfolio;
+                    })
+                };
+            } catch(err){ //This is probably because a 51st stock was added
+                return state;
+            }
         case UPDATE_STOCK:
         case UPDATE_HISTORY:
             return {
@@ -199,46 +211,94 @@ const portfolio = (state = initialState, action) => {
     }
 }
 
+const decreaseRequester = function (rqMap, requester) {
+    let thisRequester = rqMap.get(requester);
+    thisRequester ? rqMap.set(requester, thisRequester - 1) : null; //This should not happen, fail silently if it does
+    if (rqMap.get(requester) < 1) {
+        rqMap.delete(requester);
+    }
+    return rqMap;
+};
+const increaseRequester = function (rqMap, requester ){
+    let thisRequester=rqMap.get(requester);
+    rqMap.set(requester,thisRequester?thisRequester+1:1);
+    return rqMap;
+}
 /* Keeps track of asynchronous state regarding fetching data */
 const current = (state = {
     isFetching: 0, // Counter (several fetches can be done in parallel)
-    didInvalidate: false, //Not really used, remnant of react tutorial example TODO:Remove this
-    items: [], // Not really used, all data is handled by portfolio reducer TODO: Remove this
+    currentRequesters: new Map(),// Map of requesting portfolios.
+    historyRequesters: new Map(),// Map of requesting portfolios.
     e_rate_last_updated:0 //Tags the last time the exchange rate of USD/EUR was fetched
 }, action) => {
     switch (action.type) {
         case REQUEST_CURRENT:
-        case REQUEST_CURRENCY:
-        case REQUEST_HISTORY:
+            let cReq = increaseRequester(state.currentRequesters, action.requester);
             return {
                 ...state,
                 isFetching: ++state.isFetching,
-                didInvalidate: false
+                currentRequesters: cReq,
+            }
+        case REQUEST_HISTORY:
+            let hReq=increaseRequester(state.historyRequesters, action.requester);
+            return {
+                ...state,
+                isFetching: ++state.isFetching,
+                historyRequesters: hReq,
             }
         case RECEIVE_CURRENT:
+            let cRec = decreaseRequester(state.currentRequesters, action.requester);
+            return {
+                ...state,
+                isFetching:--state.isFetching,
+                currentRequesters: cRec,
+                last_updated:action.receivedAt
+            }
         case RECEIVE_HISTORY:
+            let hRec = decreaseRequester(state.historyRequesters, action.requester);
             return {
                 ...state,
                 isFetching: --state.isFetching,
-                didInvalidate:false,
-                items: action.tickerData,
-                last_updated: action.receivedAt //Tracks when the last update was made
+                last_updated: action.receivedAt, //Tracks when the last update was made
+                historyRequesters:hRec
             }
         case RECEIVE_CURRENCY:
             return {
                 ...state,
-                isFetching: --state.isFetching,
-                didInvalidate:false,
-                items: action.tickerData,
                 e_rate_last_updated: action.receivedAt
             }
         case RECEIVE_ERROR: //Reset state in case fetching was unsuccessful
+            let ecReq=state.currentRequesters;
+            let ehReq = state.historyRequesters;
+            if (action.requestType===REQUEST_CURRENT) decreaseRequester(ecReq,action.requester);
+            if (action.requestType===REQUEST_HISTORY) decreaseRequester(ehReq,action.requester);
+            if (!action.requestType) {
+                // if request type is unset we have to be creative.
+                // This is a workaround for the fact that we can't easily get hold
+                // of the requesting portfolio in case of errors dispatched from the last catch
+                // in the fetch promise chains. The chain would have to be rewritten to include
+                // the portfolioid in all steps. TODO:rewrite fetch promise chain
+                let thisERequester = ecReq.get(action.requester);
+                if (thisERequester) {
+                    decreaseRequester(ecReq, action.requester);
+                } else {
+                    thisERequester = ehReq.get(action.requester);
+                    if (thisERequester) decreaseRequester(ehReq,action.requester);
+                }
+            }
             return {
                 ...state,
                 isFetching:--state.isFetching,
-                didInvalidate:false,
+                currentRequesters:ecReq,
+                historyRequesters:ehReq,
                 isError:true,
                 error:action
+            }
+        case CLEAR_ERROR:
+            return {
+                ...state,
+                isError:false,
+                error:null
             }
         default:return state
     }

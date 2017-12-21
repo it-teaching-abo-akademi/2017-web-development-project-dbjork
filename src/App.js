@@ -13,7 +13,7 @@ import './base.css';
 import  ModalPopup  from './components/ModalPopup';
 import Portfolio from './components/Portfolio/Portfolio';
 import { connect } from 'react-redux';
-import {showPage, pages, createPortfolio, deletePortfolio, fetchCurrency} from "./actions/data_actions";
+import {showPage, pages, createPortfolio, deletePortfolio, fetchCurrency, clearError} from "./actions/data_actions";
 
 class AppComponent
     extends Component {
@@ -27,7 +27,6 @@ class AppComponent
             return <Portfolio name={p.name} key={p.name} id={p.id} currency={p.currency} onDelete={deleteFunc}/>
         });
         //TODO: change this to use the modal popup instead.
-        this.props.error && alert(this.props.error.errorMessage + "\n" + this.props.error.detailMessage + "\n" + (this.props.error.source['Error Message'] || ""));
         return (
             <div className="App">
                 <header className="App-header hflex">
@@ -35,7 +34,7 @@ class AppComponent
                         <img src={logo} className="App-logo vcenter" alt="logo" />
                     </div>
                     <div className="hflex add-div">
-                        <button id="add-portfolio" className="vcenter" onClick={this.props.askForPortfolioName}>
+                        <button disabled={portfolios.length>9} id="add-portfolio" className="vcenter" onClick={this.props.askForPortfolioName}>
                             Add new portfolio
                         </button>
                         <h1 className="App-title vcenter">Stock Portfolio Management System</h1>
@@ -68,6 +67,12 @@ class AppComponent
             </div>
         );
     }
+    componentWillReceiveProps(newProps){
+        if (newProps.error){
+            alert(newProps.error.errorMessage + "\n" + newProps.error.detailMessage + "\n" + (newProps.error.source['Error Message'] || ""));
+            this.props.clearError();
+        }
+    }
 }
 
 const mapStateToProps = state => {
@@ -83,7 +88,8 @@ const mapDispatchToProps = dispatch => {
         askForPortfolioName: () => { dispatch(showPage(pages.SHOW_ASK_P_NAME))},
         closePortfolioModal: () => { dispatch(showPage(pages.SHOW_PORTFOLIOS))},
         createPortfolio: (newPortfolio) => { dispatch(createPortfolio(newPortfolio.returnValue))},
-        deletePortfolio: (portfolioId) => { window.confirm("This will delete this portfolio. The action can not be undone\n Are you certain?") && dispatch(deletePortfolio(portfolioId))}
+        deletePortfolio: (portfolioId) => { window.confirm("This will delete this portfolio. The action can not be undone\n Are you certain?") && dispatch(deletePortfolio(portfolioId))},
+        clearError: ()=>{dispatch(clearError())}
     }
 };
 

@@ -311,7 +311,7 @@ class GraphPopupComponent extends Component {
                 return oldSel?oldSel:{ symbol, selected:true };
             })
             this.props.saveStockSelection(sel);
-        } else if (newProps.stocks.length<this.props.stocks.length) {
+        } else if (newProps.stocks.length<this.props.stocks.lengthno) {
             const sel =this.props.stockSelection.map((oldSel)=>{
                 const stock=newProps.stocks.find((s)=>{return s.symbol===oldSel.symbol;});
                 if (stock){return oldSel};
@@ -344,7 +344,7 @@ const mapStateToProps = (state, ownProps) => {
     const portfolio=state.dataReducers.portfolio.portfolios.find((p)=>{return p.id===ownProps.pId})
     const ui_portfolio=state.uiReducers.portfolios.find((p)=>{return p.id===ownProps.pId})
     return {
-        loading: state.dataReducers.current.isFetching>0,
+        loading: state.dataReducers.current.isFetching>0 && state.dataReducers.current.historyRequesters.has(ownProps.pId),
         settings:portfolio.settings,
         stockSelection:ui_portfolio && ui_portfolio.graphSelection
     }

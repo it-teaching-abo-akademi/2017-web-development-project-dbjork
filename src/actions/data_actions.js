@@ -25,6 +25,7 @@ export const UPDATE_HISTORY = 'UPDATE_HISTORY';
 export const CURRENCY_CHANGED='CURRENCY_CHANGED';
 export const SELECT_STOCK = 'SELECT_STOCK';
 export const RECEIVE_ERROR = 'RECEIVE_ERROR';
+export const CLEAR_ERROR = 'CLEAR_ERROR';
 export const CHANGE_RATE_USD_TO_EUR = 'CHANGE_RATE_USD_TO_EUR';
 export const SAVE_SETTINGS = 'SAVE_SETTINGS';
 
@@ -90,12 +91,14 @@ export const changeCurrency = (pId, newCurrency) => {
 
 export const requestHistory = stock => ({
     type: REQUEST_HISTORY,
-    stock
+    stock,
+    requester:stock.portfolioId
 });
 
 export const requestCurrent = stock => ({
     type: REQUEST_CURRENT,
-    stock
+    stock,
+    requester:stock.portfolioId
 });
 
 export const requestCurrency= () =>  {
@@ -142,10 +145,10 @@ export const fetchCurrent = (stock, pId) => (dispatch, getState) => {
         })
         .then(response => response.json()) //Grab the json data
         .then(json=>dispatch(receiveCurrent(stock,json, TIME_SERIES[ts])))
-        .then((stock)=>dispatch(currentReceived(stock))).catch((reason)=>{
+        .then((action)=>dispatch(currentReceived(action.stock))).catch((reason)=>{
             debugger; // There is some strange behaviour here, need to debug
                       // but the errors are rare enough to be an annoyance.
-           dispatch(serverError(reason)); // Make sure this is handled.
+           dispatch(serverError(reason, REQUEST_CURRENT)); // Make sure this is handled.
            console.log(reason);
         })
 };
@@ -177,7 +180,7 @@ export const fetchHistory = (stock, pId) => (dispatch, getState) => {
         .then((stock)=>dispatch(historyReceived(stock))).catch((reason)=>{
             debugger; // See fetchCurrent
             console.log(reason);
-            dispatch(serverError(reason))
+            dispatch(serverError(reason, REQUEST_HISTORY))
         })
 };
 
@@ -197,6 +200,7 @@ export const currentReceived = (stock) => (
     {
         type: RECEIVE_CURRENT,
         pId: stock.id,
+        requester:stock.portfolioId,
         receivedAt: Date.now()
     });
 
@@ -204,6 +208,7 @@ export const historyReceived = (stock) => {
     return {
         type:RECEIVE_HISTORY,
         stock,
+        requester:stock.portfolioId,
         receivedAt: Date.now()
     }
 };
@@ -216,22 +221,30 @@ export const currencyReceived = (rate) => {
 };
 
 /* Error handlers, will trigger an alert message in the ui */
-export const serverError = (response) => dispatch => {
+export const serverError = (response, requestType, requester) => dispatch => {
     return dispatch({
         type: RECEIVE_ERROR,
+        requestType,
+        requester,
         errorMessage:"Server error",
         detailMessage:response.message,
         source:""
     })
 };
 
-export const jsonError = (stock, json) => dispatch=> {
+export const jsonError = (stock, json, requestType) => dispatch=> {
     return dispatch ({
         type: RECEIVE_ERROR,
+        requestType,
+        stock,
+        requester:stock.portfolioId,
         errorMessage: "Unable to extract stock data from response",
         detailMessage: "Possible cause: " + stock.symbol + " is not a valid stock ticker",
         source:json
     })
+};
+export const clearError = () => {
+    return { type: CLEAR_ERROR };
 };
 
 /* Parse the JSON data */
@@ -243,10 +256,11 @@ export const receiveHistory = (stock, json, timeSeries) => dispatch => {
             history
         }
         dispatch(updateHistory(stockWHistory));
+        return stock
     } catch (e) {
         debugger;
         console.log(json);
-        return dispatch(jsonError(stock,json))
+        return dispatch(jsonError(stock,json, REQUEST_HISTORY))
     }
 };
 
@@ -275,7 +289,7 @@ export const receiveCurrent = (stock, json, timeSeries) => dispatch => {
         // The best we are able to do is to catch it here and give a reasonable explanation.
         debugger;
         console.log(json);
-        return dispatch(jsonError(stock,json))
+        return dispatch(jsonError(stock,json, REQUEST_CURRENT))
     }
 };
 

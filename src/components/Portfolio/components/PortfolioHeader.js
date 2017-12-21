@@ -75,7 +75,7 @@ const mapDispatchToProps = (state, ownProps ) => {
 const mapStateToProps = (state, ownProps) => {
     if (!(state.dataReducers.current)) return { loading:false };
     return {
-        loading: state.dataReducers.current.isFetching>0
+        loading: state.dataReducers.current.isFetching>0 && state.dataReducers.current.currentRequesters.get(ownProps.pId)
     }
 };
 const PortfolioHeader= connect(

@@ -9,7 +9,7 @@ class Toolbar extends Component {
     render() {
         return (
             <div className="toolbar hflex">
-                <button onClick={this.props.onAddStock}>Add stock</button>
+                <button disabled={!this.props.stocksCanBeAdded} onClick={this.props.onAddStock}>Add stock</button>
                 <button disabled={!this.props.graphCanBeShown} onClick={this.props.onPerfGraph}>Perf graph</button>
                 <button disabled={!this.props.hasSelected} onClick={this.props.onRemove} >Remove selected</button>
             </div>

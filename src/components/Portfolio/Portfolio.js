@@ -20,6 +20,7 @@ import SettingsPopup from "./SettingsPopup";
 class PortfolioComponent extends Component {
     constructor(props){
         super(props);
+        this.state={timer:null};
         //Ensure "this" is available
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
 
@@ -34,7 +35,7 @@ class PortfolioComponent extends Component {
                 <div className="vflex">
                     <PortfolioHeader pId={this.props.id} name={this.props.name} currency={this.props.currency} onDelete={this.props.onDelete} onCurrencyChange={this.props.handleCurrencyChange} onShowSettings={this.props.handleSettings}/>
                     <StockList ref={"sl_"+this.props.name} pId={this.props.id} rate={this.props.currency==="EUR"?this.props.exchangeRateUSD:1} stockList={this.props.stockList}/>
-                    <Toolbar onAddStock={this.props.handleAddStock} onPerfGraph={this.props.handlePerfGraph} onRemove={this.props.removeSelected} graphCanBeShown={graphCanBeShown} hasSelected={hasSelected}/>
+                    <Toolbar onAddStock={this.props.handleAddStock} onPerfGraph={this.props.handlePerfGraph} onRemove={this.props.removeSelected} graphCanBeShown={graphCanBeShown} hasSelected={hasSelected} stocksCanBeAdded={this.props.stockList.length<50}/>
                 </div>
                 <ModalPopup show={this.props.asksForTicker} onAcceptVal={this.props.addStock}
                             msg= {"Please enter ticker for the stock you would like to add"}
@@ -58,11 +59,21 @@ class PortfolioComponent extends Component {
         //const newSettings = Object.assign({}, this.props.settings, settings);
         this.props.saveSettings(settings);
         this.props.fetchAllValues(this.props.stockList);
+        clearInterval(this.state.timer);
+        let timer=setInterval(()=>this.props.fetchAllValues(this.props.stockList), settings.frequency);
+        this.setState({timer});
     }
     componentDidMount(){
         // Trigger a fetch for current values for all stocks
         this.props.fetchAllValues(this.props.stockList);
-
+        // Start the timer that will automatically fetch new values
+        console.log(typeof this.props.settings.frequency);
+        let timer = setInterval(()=>this.props.fetchAllValues(this.props.stockList), this.props.settings.frequency);
+        this.setState({timer});
+    }
+    componentWillUnmount(){
+        //stop the timer
+        clearInterval(this.state.timer);
     }
 }
 
