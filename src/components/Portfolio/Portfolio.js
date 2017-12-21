@@ -26,7 +26,7 @@ class PortfolioComponent extends Component {
     }
     render() {
         // Disable the "Performance Graph" button if we are still loading
-        const graphCanBeShown = this.props.stockList.every((s)=>s.value>0);
+        const graphCanBeShown = this.props.stockList.length>0  && this.props.stockList.every((s)=>s.value>0);
         // Disable the Delete button if nothing is selected.
         const hasSelected = this.props.stockList.some((s)=> s.selected === true);
         return (
@@ -60,7 +60,9 @@ class PortfolioComponent extends Component {
         this.props.fetchAllValues(this.props.stockList);
     }
     componentDidMount(){
+        // Trigger a fetch for current values for all stocks
         this.props.fetchAllValues(this.props.stockList);
+
     }
 }
 
@@ -90,7 +92,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         addStock: (stock) => { dispatch(addStock(stock.pId, stock.symbol, stock.amount))},
         handleCurrencyChange: (e) => { e.target.value!==ownProps.currency?dispatch(fetchCurrency(ownProps.id, e.target.value, Date.now()-ownProps.exchangeRateFetched>7200000)):null},
         saveSettings: (settings) => {dispatch(saveSettings(settings, ownProps.id))},
-        fetchAllValues: (stockList) => dispatch(fetchAllCurrent(stockList, ownProps.id))
+        fetchAllValues: (stockList) => dispatch(fetchAllCurrent(stockList, ownProps.id)),
         }
     };
 

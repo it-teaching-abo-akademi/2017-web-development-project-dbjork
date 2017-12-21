@@ -68,7 +68,6 @@ class GraphPopupComponent extends Component {
         this.onEndChange= this.onEndChange.bind(this);
         this.onFrequencyChange= this.onFrequencyChange.bind(this);
         this.getRenderData=this.getRenderData.bind(this);
-        this.getStockSelection= this.getStockSelection.bind(this);
         this.handleStockSelection=this.handleStockSelection.bind(this);
 
         /* Fetch history if it doesn't exist
@@ -78,9 +77,6 @@ class GraphPopupComponent extends Component {
         const hasHistory=props.stocks.every((s)=> {return Object.keys(s.history).length>0});
         if (!hasHistory){
             this.fetchHistoryForAll();
-        }
-        if (!props.stockSelection){
-            this.getStockSelection();
         }
 
     }
@@ -132,7 +128,7 @@ class GraphPopupComponent extends Component {
         });
 
         // check the stock checkboxes, defaults to all checked when app is reloaded
-        const checkBoxes = this.getStockSelection().map((s)=>{
+        const checkBoxes = this.props.stockSelection.map((s)=>{
             return (<div className={"hflex"} style={{flexWrap:"nowrap"}} key={this.props.pId+s.symbol}>
                     <input type={"checkbox"} id={s.symbol} checked={s.selected} onClick={this.handleStockSelection}/>
                     <label htmlFor={s.symbol}>{s.symbol}</label>
@@ -201,7 +197,7 @@ class GraphPopupComponent extends Component {
        toggles the state that the checkbox depends on.
      */
     handleStockSelection(e){
-        const oldSelection = this.getStockSelection();
+        const oldSelection = this.props.stockSelection;
         this.props.saveStockSelection(
             oldSelection.map((s)=>{
                 if (s.symbol===e.target.id){
@@ -221,7 +217,7 @@ class GraphPopupComponent extends Component {
          * [ {name:'2017-12-19', stock1:123.45, stock2:543.21},{...] */
         //const stockNames = this.getStockNames();
         const _this = this; //needs to access props inside reduce=>forEach
-        const stockSelection = this.getStockSelection();
+        const stockSelection = this.props.stockSelection;
         const data = Object.keys(this.props.stocks[0].history).reduce((newArray, name) => {
             let dataPoint = {
                 name
@@ -243,24 +239,6 @@ class GraphPopupComponent extends Component {
         return data;
     }
 
-    /*   Initializes the checkbox data (for selecting stocks to be displayed)
-         This is not a good solution, should be in an action that runs prior to creating
-         this component.
-     */
-    getStockSelection() {
-        if (this.props.stockSelection && this.props.stockSelection.length===this.props.stocks.length)
-            return this.props.stockSelection;
-        else {
-            const initialState = this.getStockNames().map((symbol) => {
-                    return {
-                        symbol,
-                        selected: true
-                    }
-                }
-            );
-            return this.props.saveStockSelection(initialState);
-        }
-    }
 
     /* An array of stock symbols is needed in several other functions,
      * convenience method.
@@ -318,6 +296,38 @@ class GraphPopupComponent extends Component {
     /* triggered whenever something is changed, dates or frequency */
     fetchHistoryForAll(){
         this.props.fetchHistoryForAll(this.props.stocks);
+    }
+
+    componentWillReceiveProps(newProps){
+        /*
+         * Add or remove checkboxes if stocks are added or removed
+         */
+        if (newProps.stocks.length>this.props.stocks.length){
+            const sel = newProps.stocks.reduce((newArr, stock)=>{
+                newArr.push(stock.symbol);
+                return newArr;
+            },[]).map((symbol) => {
+                const oldSel = this.props.stockSelection.find((c)=>{ return c.symbol===symbol});
+                return oldSel?oldSel:{ symbol, selected:true };
+            })
+            this.props.saveStockSelection(sel);
+        } else if (newProps.stocks.length<this.props.stocks.length) {
+            const sel =this.props.stockSelection.map((oldSel)=>{
+                const stock=newProps.stocks.find((s)=>{return s.symbol===oldSel.symbol;});
+                if (stock){return oldSel};
+            })
+        }
+    }
+    componentDidMount(){
+        // Trigger creation of the stock checkboxes
+        const initialState = this.getStockNames().map((symbol) => {
+                    return {
+                        symbol,
+                        selected: true
+                    }
+                }
+            );
+        this.props.saveStockSelection(initialState);
     }
 }
 

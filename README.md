@@ -48,8 +48,7 @@ Known flaws and compromises
 Getting the chart window to display properly e.g. on small devices will require more work
 
 Know bugs:
-There is a bug in creating the chart data for a newly added stock.
-Workaround: reload the page and the graph should display properly
+
 
 
 Bear in mind that this is my first React project, it will reflect my current
