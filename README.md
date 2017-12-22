@@ -11,14 +11,13 @@ Features:
 - Add up to 10 portfolios
 - Delete unwanted portfolio
 - Add up to 50 stock symbols (tickers) per portfolio 
-  *(note: limit not implemented yet)*
 - Delete any unwanted stock from portfolio
-- Shows current per stock value for each stock (depending on update frequency, defaults to hourly and can be changed in settings)
+- Shows current per stock value for each stock, with automatic updates 
+(depending on update frequency, defaults to hourly and can be changed in settings)
 - Shows total value for each stock
 - Shows total value for the portfolio
 - Settings per portfolio:
     1. Update frequency (for fetching current value)
-        *(note: automatic refresh not implemented yet)*
     2. Currency (display values in USD or €)
 - Display line chart showing a valuation graph of all (or selected) stocks in a portfolio.
 - Settings for chart window:
@@ -29,15 +28,9 @@ Features:
 
 
 "Requested" features not implemented yet
-- There is currently no way to refresh the stock value other than reloading the page
-    - Manual refresh by means of a button
-    - Automatic timed refresh
-- Limit number of stocks to 50 per portfolio.
-- Block creation of more than one copy of a stock
-    - Actually, provide a means to change amount
-    - Workaround: it is possible to delete a stock and re-add it with another amount
+- A way to change the quantity for a stock item.
+    - Workaround: Delete the stock and re-add it with another amount
 - Credits page, lists libraries and resources used in the project
-- Sort a stock list on symbol, value and selection
 
 Known flaws and compromises
 - Error handling is rudimentary at best.
@@ -46,9 +39,6 @@ Known flaws and compromises
 - The chosen date picker component is actually not to my liking
 - The chosen chart component has limits (or perhaps hidden functionality) regarding the layout. 
 Getting the chart window to display properly e.g. on small devices will require more work
-
-Know bugs:
-
 
 
 Bear in mind that this is my first React project, it will reflect my current

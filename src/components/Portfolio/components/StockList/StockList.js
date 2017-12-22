@@ -6,13 +6,16 @@
 import React, { Component } from 'react';
 import HeaderRow from './components/HeaderRow';
 import StockRow from "./components/StockRow";
-import './stocklist.css';
 import { connect } from 'react-redux';
 import { selectStock} from "../../../../actions/data_actions";
 
 
 class StockListComponent extends Component{
-
+    constructor(props){
+        super(props);
+        this.state={column:'none',order:0};
+        this.handleSort = this.handleSort.bind(this);
+    }
     render() {
         const totalRowStyle={
             marginRight:"1em",
@@ -21,24 +24,43 @@ class StockListComponent extends Component{
        const portfolioTotal = (this.props.rate*this.props.stockList.reduce((total, stock) => total+stock.totalValue,0))
            .toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2});
         /* Create a row item for each stock */
-        var listItems=this.props.stockList.map((stockrow) =>
+        let sortedList = this.props.stockList;
+        if (this.state.column!=='none'){
+            sortedList = this.props.stockList.sort((a,b)=>{
+                function isNumeric(n) {
+                    return !isNaN(parseFloat(n)) && isFinite(n);
+                }
+                const num = isNumeric(a[this.state.column]);
+                const aVal = num?parseFloat(a[this.state.column]):a[this.state.column]===undefined?false:a[this.state.column];
+                const bVal = num?parseFloat(b[this.state.column]):b[this.state.column]===undefined?false:b[this.state.column];
+                if (this.state.order===true) {
+                    return aVal> bVal? 1 : aVal < bVal ? -1 : 0;
+                } else {
+                    return aVal> bVal? -1 : aVal < bVal ? 1 : 0;
+                }
+            })
+        }
+        var listItems=sortedList.map((stockrow) =>
         {
             return <StockRow stock={stockrow} key={stockrow.symbol} rate={this.props.rate} onSelectStock={this.props.selectStock}/>
         });
         return (
             <div className="stocklist">
-                <HeaderRow />
+                <HeaderRow onSortClick={this.handleSort} />
                 <div ref="stock-rows">
                     {listItems}
                 </div>
                 {parseFloat(portfolioTotal) === parseFloat(0.00) ? null :
-                    <div className="hflex">
+                    <div className="hflex total-row">
                         <div style={totalRowStyle}>Total portfolio value:</div>
                         <div style={totalRowStyle}>{portfolioTotal}</div>
                     </div>
                 }
             </div>
         );
+    }
+    handleSort(column, order){
+        this.setState({column, order});
     }
 }
 const mapDispatchToProps = (dispatch, ownProps) => {

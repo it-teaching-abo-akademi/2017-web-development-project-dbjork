@@ -39,7 +39,7 @@ input {
 }
 .button-row {
    margin-top:auto;
-    margin-bottom:2em;
+    /*margin-bottom:2em;*/
     padding-top:1em;
     justify-content:flex-end;
 }

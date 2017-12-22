@@ -1,7 +1,101 @@
-/* StockList styling */
+/* StockList table styles
+ * Author Dan Björkgren 2017
+ */
+.table-row { /* Flexbox with items stretched */
+    display:flex;
+    flex-direction:row;
+    align-items:stretch;
+    border:1pt solid black;
+    width:100%;
+    margin:0px;
+    padding:0px;
+    flex-wrap:nowrap;
+}
 .stocklist {
-    padding:5px;
-    margin-bottom:1em;
+    min-width:380px;
     margin-left:1em;
     margin-right:1em;
+}
+.sl-header > .table-cell > p {
+    white-space: nowrap;
+
+}
+.table-cell { /*Table cells fills the row
+              * by growing */
+    margin:0px;
+    flex-grow:1;
+    padding:1px 4px 1px 1px;
+    width:25%;
+    text-align:right;
+    border: 0.5px #000;
+    border-right-style: solid;
+    border-bottom-style: none;
+}
+.col1 {
+    text-align: left;
+    min-width:5.5ch;
+    width:12%;
+
+}
+.col2 {
+    min-width:8.5ch;
+    width:22%;
+}
+.col3 {
+    min-width:8ch;
+    width:20%;
+}
+.col4 {
+    min-width:7.5ch;
+    width:25%;
+}
+.col5 {
+    border:none;
+    width:10%;
+    min-width:5ch;
+}
+.table-cell p {
+    font-size:80%;
+    padding:0px;
+    margin:0px;
+}
+input[type=checkbox]>label{
+    display:none;
+}
+@media (max-width:420px) {
+
+    .stocklist {
+        min-width:280px;
+        margin-left:0.5em;
+        margin-right:0.5em;
+        font-family:sans-serif;
+    }
+
+    .total-row > *{
+        font-size:90%;
+    }
+    .table-cell p {
+        font-size:70%;
+    }
+    .col5 > input {
+        width:1ch;
+    }
+    .sl-header > .col5 > p {
+        display:none;
+    }
+    .col1 {
+        min-width:4.65ch;
+    }
+    .col2 {
+        min-width:7ch;
+    }
+    .col3 {
+        min-width:6ch;
+    }
+    .col5 {
+        border:none;
+        min-width:1.5ch;
+        width:5%;
+    }
+
 }
