@@ -34,7 +34,7 @@ class PortfolioComponent extends Component {
             <div className='portfolio'>
                 <div className="vflex">
                     <PortfolioHeader pId={this.props.id} name={this.props.name} currency={this.props.currency} onDelete={this.props.onDelete} onCurrencyChange={this.props.handleCurrencyChange} onShowSettings={this.props.handleSettings}/>
-                    <StockList ref={"sl_"+this.props.name} pId={this.props.id} rate={this.props.currency==="EUR"?this.props.exchangeRateUSD:1} stockList={this.props.stockList}/>
+                    <StockList currency={this.props.currency} ref={"sl_"+this.props.name} pId={this.props.id} rate={this.props.currency==="EUR"?this.props.exchangeRateUSD:1} stockList={this.props.stockList}/>
                     <Toolbar onAddStock={this.props.handleAddStock} onPerfGraph={this.props.handlePerfGraph} onRemove={this.props.removeSelected} graphCanBeShown={graphCanBeShown} hasSelected={hasSelected} stocksCanBeAdded={this.props.stockList.length<50}/>
                 </div>
                 <ModalPopup show={this.props.asksForTicker} onAcceptVal={this.props.addStock}

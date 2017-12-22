@@ -12,11 +12,11 @@ class StockRowComponent extends Component {
         /* Format the stock values */
         let lVal = (parseFloat(this.props.stock.value)*this.props.rate).toLocaleString(
             undefined, // use a string like 'en-US' to override browser locale
-            { minimumFractionDigits: 2, maximumFractionDigits:2 }
+            { minimumFractionDigits: 2, maximumFractionDigits:2 , style:"currency",currency:this.props.currency}
         );
         let totalVal = (this.props.stock.totalValue*this.props.rate).toLocaleString(
             undefined, // use a string like 'en-US' to override browser locale
-            { minimumFractionDigits: 2, maximumFractionDigits:2 }
+            { minimumFractionDigits: 2, maximumFractionDigits:2, style:"currency",currency:this.props.currency}
         );
         return (
             <div className="stockrow table-row">

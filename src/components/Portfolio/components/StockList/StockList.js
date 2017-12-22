@@ -22,7 +22,7 @@ class StockListComponent extends Component{
             marginLeft:"auto"
         }
        const portfolioTotal = (this.props.rate*this.props.stockList.reduce((total, stock) => total+stock.totalValue,0))
-           .toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2});
+           .toLocaleString(undefined, {minimumFractionDigits:2,maximumFractionDigits:2, style:"currency",currency:this.props.currency});
         /* Create a row item for each stock */
         let sortedList = this.props.stockList;
         if (this.state.column!=='none'){
@@ -39,12 +39,12 @@ class StockListComponent extends Component{
         }
         var listItems=sortedList.map((stockrow) =>
         {
-            return <StockRow stock={stockrow} key={stockrow.symbol} rate={this.props.rate} onSelectStock={this.props.selectStock}/>
+            return <StockRow currency={this.props.currency} stock={stockrow} key={stockrow.symbol} rate={this.props.rate} onSelectStock={this.props.selectStock}/>
         });
         return (
             <div className="stocklist">
                 <HeaderRow onSortClick={this.handleSort} />
-                <div ref="stock-rows">
+                <div ref="stock-rows" className={"stock-rows"}>
                     {listItems}
                 </div>
                 {parseFloat(portfolioTotal) === parseFloat(0.00) ? null :
