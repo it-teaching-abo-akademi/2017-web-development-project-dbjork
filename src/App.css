@@ -73,6 +73,33 @@
 .logo-div {
   flex:0 0 60px;
 }
+.error-list {
+  border:1px solid black;
+  background-color:#ffffff;
+  color:black;
+}
+.error-item p {
+  font-size:60%;
+}
+.error-item {
+  font-size:60%;
+  border-bottom:1px solid black;
+    display:flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+.error-list:hover {
+  display:flex;
+}
+.credits {
+  display:block;
+}
+.credits p {
+  font-size:80%;
+}
+.credits a {
+  font-size:90%;
+}
 @media (max-width:340px) {
   .App-title {
     align-self:center;

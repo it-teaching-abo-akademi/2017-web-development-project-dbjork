@@ -84,8 +84,9 @@ class ModalPopup extends Component {
     accept(e){
 
         e.preventDefault();
-        this.props.onAcceptVal(this.state);
-        this.props.onCancel();
+        if (this.props.onAcceptVal(this.state)) {
+            this.props.onCancel();
+        }
     }
 
 }

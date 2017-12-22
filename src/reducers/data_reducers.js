@@ -35,7 +35,7 @@ import {
     CHANGE_RATE_USD_TO_EUR,
     SAVE_SETTINGS,
     TIME_SERIES,
-    CLEAR_ERROR
+    CLEAR_ERROR, CLEAR_JSON_ERRORS
 } from "../actions/data_actions";
 import { combineReducers } from 'redux';
 
@@ -86,30 +86,30 @@ const portfolio = (state = initialState, action) => {
             //TODO: Find an API that returns what stock exchange a stock is traded on. (Portfolios should not mix exchanges since the historical data returned differs)
             return action.checkTicker;
         case CREATE_STOCK:
-                return {
-                    ...state,
-                    portfolios: state.portfolios.map(function (portfolio) {
-                        if (portfolio.id === action.stock.portfolioId) {
-                            const exists = portfolio.stocks.find((s)=>{ return s.symbol===action.stock.symbol});
-                            if (exists ){
-                                throw new Error("You can only add a stock once!\n(Delete and re-add if you want to change the amount")
-                            }
-                            if (portfolio.stocks.length > 49) {
-                                throw new Error("Only 50 stocks allowed for each portfolio.\nAdd another portfolio if you need more");
-                            }
-                            return Object.assign({},
-                                portfolio, {
-                                    stocks: [...portfolio.stocks,
-                                        {
-                                            ...action.stock, //Append a new stock and assign it an id
-                                            id: ++portfolio.nextStockId,
-                                        }
-                                    ]
-                                });
+            return {
+                ...state,
+                portfolios: state.portfolios.map(function (portfolio) {
+                    if (portfolio.id === action.stock.portfolioId) {
+                        const exists = portfolio.stocks.find((s)=>{ return s.symbol===action.stock.symbol});
+                        if (exists ){
+                            throw new Error("You can only add a stock once!\n(Delete and re-add if you want to change the amount")
                         }
-                        return portfolio;
-                    })
-                };
+                        if (portfolio.stocks.length > 49) {
+                            throw new Error("Only 50 stocks allowed for each portfolio.\nAdd another portfolio if you need more");
+                        }
+                        return Object.assign({},
+                            portfolio, {
+                                stocks: [...portfolio.stocks,
+                                    {
+                                        ...action.stock, //Append a new stock and assign it an id
+                                        id: ++portfolio.nextStockId,
+                                    }
+                                ]
+                            });
+                    }
+                    return portfolio;
+                })
+            };
         case UPDATE_STOCK:
         case UPDATE_HISTORY:
             return {
@@ -228,7 +228,9 @@ const current = (state = {
     isFetching: 0, // Counter (several fetches can be done in parallel)
     currentRequesters: new Map(),// Map of requesting portfolios.
     historyRequesters: new Map(),// Map of requesting portfolios.
-    e_rate_last_updated:0 //Tags the last time the exchange rate of USD/EUR was fetched
+    e_rate_last_updated:0, //Tags the last time the exchange rate of USD/EUR was fetched
+    jsonErrorCount:0,
+    jsonErrorList:[]
 }, action) => {
     switch (action.type) {
         case REQUEST_CURRENT:
@@ -290,8 +292,17 @@ const current = (state = {
                 isFetching:--state.isFetching,
                 currentRequesters:ecReq,
                 historyRequesters:ehReq,
-                isError:true,
-                error:action
+                jsonErrorCount:action.source!==""&&action.stock.id!==0?state.jsonErrorCount+1:state.jsonErrorCount,
+                jsonErrorList: //Add a new error message to the list
+                    action.source!==""&&action.stock.id!==0?addToJSONErrors(state.jsonErrorList,action):state.jsonErrorList,
+                isError:action.source===""||action.stock.id===0,
+                error:action.source===""||action.stock.id===0?action:null
+            }
+        case CLEAR_JSON_ERRORS:
+            return {
+                ...state,
+                jsonErrorList:[],
+                jsonErrorCount:0
             }
         case CLEAR_ERROR:
             return {
@@ -302,6 +313,17 @@ const current = (state = {
         default:return state
     }
 }
+const addToJSONErrors = (errorList, action) =>
+{
+    let newArr=errorList.slice();
+    newArr.push({
+        json: action.source,
+        errorMessage: action.errorMessage,
+        detailMessage: action.detailMessage
+    });
+    return newArr;
+}
+
 const version = (state={version:0}, action)=> {return state}//Dummy to get the version property inserted in state
 const dataReducers = combineReducers({
     version,

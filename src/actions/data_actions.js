@@ -25,6 +25,7 @@ export const CURRENCY_CHANGED='CURRENCY_CHANGED';
 export const SELECT_STOCK = 'SELECT_STOCK';
 export const RECEIVE_ERROR = 'RECEIVE_ERROR';
 export const CLEAR_ERROR = 'CLEAR_ERROR';
+export const CLEAR_JSON_ERRORS = 'CLEAR_JSON_ERRORS';
 export const CHANGE_RATE_USD_TO_EUR = 'CHANGE_RATE_USD_TO_EUR';
 export const SAVE_SETTINGS = 'SAVE_SETTINGS';
 
@@ -140,13 +141,14 @@ export const fetchCurrent = (stock, pId) => (dispatch, getState) => {
                 debugger;
                 throw response;
             }
+            if (response.status!==200){
+                debugger;
+            }
             return response;
         })
         .then(response => response.json()) //Grab the json data
         .then(json=>dispatch(receiveCurrent(stock,json, TIME_SERIES[ts])))
         .then((action)=>dispatch(currentReceived(action.stock))).catch((reason)=>{
-            debugger; // There is some strange behaviour here, need to debug
-                      // but the errors are rare enough to be an annoyance.
            dispatch(serverError(reason, REQUEST_CURRENT)); // Make sure this is handled.
            console.log(reason);
         })
@@ -172,12 +174,14 @@ export const fetchHistory = (stock, pId) => (dispatch, getState) => {
                 debugger;
                 throw response;
             }
+            if (response.status!==200){
+                debugger;
+            }
             return response;
         })
         .then(response => response.json())
         .then(json=>dispatch(receiveHistory(stock,json, TIME_SERIES[ts])))
         .then((stock)=>dispatch(historyReceived(stock))).catch((reason)=>{
-            debugger; // See fetchCurrent
             console.log(reason);
             dispatch(serverError(reason, REQUEST_HISTORY))
         })
@@ -219,6 +223,16 @@ export const currencyReceived = (rate) => {
     }
 };
 
+export const internalError = (error, requestType, requester) => dispatch => {
+    return dispatch({
+        type:RECEIVE_ERROR,
+        requestType,
+        requester,
+        errorMessage:"User error",
+        detailMessage:error.message,
+        source:""
+    })
+}
 /* Error handlers, will trigger an alert message in the ui */
 export const serverError = (response, requestType, requester) => dispatch => {
     return dispatch({
@@ -245,6 +259,9 @@ export const jsonError = (stock, json, requestType) => dispatch=> {
 export const clearError = () => {
     return { type: CLEAR_ERROR };
 };
+export const clearJSONErrors = () => {
+    return {type: CLEAR_JSON_ERRORS};
+}
 
 /* Parse the JSON data */
 export const receiveHistory = (stock, json, timeSeries) => dispatch => {
@@ -292,11 +309,16 @@ export const receiveCurrent = (stock, json, timeSeries) => dispatch => {
     }
 };
 
-export const receiveCurrency = (json) => {
-    const rate=parseFloat(json["Realtime Currency Exchange Rate"]["5. Exchange Rate"]);
-    return {
-        type: CHANGE_RATE_USD_TO_EUR,
-        rate
+export const receiveCurrency = (json) => dispatch =>{
+    try {
+        const rate = parseFloat(json["Realtime Currency Exchange Rate"]["5. Exchange Rate"]);
+        return {
+            type: CHANGE_RATE_USD_TO_EUR,
+            rate
+        }
+    } catch (error) {
+        console.log(json);
+        return dispatch(jsonError({symbol:"EUR"},json,CHANGE_RATE_USD_TO_EUR));
     }
 }
 
@@ -317,6 +339,9 @@ export const deletePortfolio = (id) => ({
     id
 })
 
+//Convenience function to check if a value is numeric
+export const isNumeric = (n) => { return !isNaN(parseFloat(n)) && isFinite(n); }
+
 /* Create a new stock stub and dispatch for fetching data */
 export const addStock = (portfolioId, symbol, amount) => (dispatch) => {
     const stock={
@@ -328,7 +353,15 @@ export const addStock = (portfolioId, symbol, amount) => (dispatch) => {
         totalValue:0,
         history:[]
     };
+    if (!isNumeric(amount)) {
+        dispatch(internalError(new Error("You must provide a numeric quantity of stock"), CREATE_STOCK, portfolioId));
+        return false;
+    }
+    if ((typeof symbol) !== "string" || symbol.length===0 || symbol.length>5) {
 
+        dispatch(internalError(new Error("You have given a malformed symbol. It must be at least one character and at most five characters long"),CREATE_STOCK,portfolioId));
+        return false;
+    }
     return dispatch(fetchCurrent(stock, portfolioId));
 };
 

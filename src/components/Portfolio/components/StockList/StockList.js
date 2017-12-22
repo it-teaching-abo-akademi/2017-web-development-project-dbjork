@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import HeaderRow from './components/HeaderRow';
 import StockRow from "./components/StockRow";
 import { connect } from 'react-redux';
-import { selectStock} from "../../../../actions/data_actions";
+import { selectStock, isNumeric} from "../../../../actions/data_actions";
 
 
 class StockListComponent extends Component{
@@ -27,9 +27,6 @@ class StockListComponent extends Component{
         let sortedList = this.props.stockList;
         if (this.state.column!=='none'){
             sortedList = this.props.stockList.sort((a,b)=>{
-                function isNumeric(n) {
-                    return !isNaN(parseFloat(n)) && isFinite(n);
-                }
                 const num = isNumeric(a[this.state.column]);
                 const aVal = num?parseFloat(a[this.state.column]):a[this.state.column]===undefined?false:a[this.state.column];
                 const bVal = num?parseFloat(b[this.state.column]):b[this.state.column]===undefined?false:b[this.state.column];

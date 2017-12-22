@@ -16,6 +16,7 @@ Features:
 (depending on update frequency, defaults to hourly and can be changed in settings)
 - Shows total value for each stock
 - Shows total value for the portfolio
+- Sort to your liking
 - Settings per portfolio:
     1. Update frequency (for fetching current value)
     2. Currency (display values in USD or €)
@@ -30,10 +31,9 @@ Features:
 "Requested" features not implemented yet
 - A way to change the quantity for a stock item.
     - Workaround: Delete the stock and re-add it with another amount
-- Credits page, lists libraries and resources used in the project
 
 Known flaws and compromises
-- Error handling is rudimentary at best.
+- Error handling is a bit rudimentary.
 - Alphavantage API response is not clear in case of errors, not much to do about that
    - As a consequence there is now certain way of validating a stock symbol, a different API would have to be used
 - The chosen date picker component is actually not to my liking

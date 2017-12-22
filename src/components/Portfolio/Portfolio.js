@@ -42,7 +42,7 @@ class PortfolioComponent extends Component {
                             header={"New stock"} okText={'Add stock'} onCancel={this.props.closeStockModal}
                             pId={this.props.id}>
                     <div className="vflex">
-                        <div className="hflex"><div className="label" style={{minWidth:"7ch"}}>Ticker:</div><input type={"text"} name={"symbol"} /></div>
+                        <div className="hflex"><div className="label" style={{minWidth:"7ch"}}>Ticker:</div><input autoFocus={true} type={"text"} name={"symbol"} /></div>
                         <div className="hflex"><div className="label" style={{minWidth:"7ch"}}>Amount:</div><input type={"text"} name={"amount"} /></div>
                     </div>
                 </ModalPopup>
@@ -100,9 +100,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         handlePerfGraph: () =>  dispatch(showPage(pages.SHOW_HISTORY,ownProps.id)),
         removeSelected: () => dispatch (deleteSelectedStock(ownProps.id)),
         closeStockModal: () => { dispatch(showPage(pages.SHOW_PORTFOLIOS))},
-        addStock: (stock) => { dispatch(addStock(stock.pId, stock.symbol, stock.amount))},
+        addStock: (stock) => { return dispatch(addStock(stock.pId, stock.symbol, stock.amount))},
         handleCurrencyChange: (e) => { e.target.value!==ownProps.currency?dispatch(fetchCurrency(ownProps.id, e.target.value, Date.now()-ownProps.exchangeRateFetched>7200000)):null},
-        saveSettings: (settings) => {dispatch(saveSettings(settings, ownProps.id))},
+        saveSettings: (settings) => {return dispatch(saveSettings(settings, ownProps.id))},
         fetchAllValues: (stockList) => dispatch(fetchAllCurrent(stockList, ownProps.id)),
         }
     };
