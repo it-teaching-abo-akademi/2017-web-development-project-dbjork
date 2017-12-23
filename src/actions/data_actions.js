@@ -330,7 +330,12 @@ export const updateHistory = (stock) => {
     return { type: UPDATE_HISTORY, stock};
 }
 
-export const createPortfolio = (name) => {return {
+export const createPortfolio = (name) => dispatch => {
+    if (!name || name===""){
+        dispatch(internalError(new Error("Please provide a name for the portfolio"),CREATE_PORTFOLIO, 0));
+        return false;
+    }
+    return {
     type: CREATE_PORTFOLIO,
     name
 }};
