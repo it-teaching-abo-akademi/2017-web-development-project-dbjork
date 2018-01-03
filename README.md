@@ -35,7 +35,7 @@ Features:
 Known flaws and compromises
 - Error handling is a bit rudimentary.
 - Alphavantage API response is not clear in case of errors, not much to do about that
-   - As a consequence there is now certain way of validating a stock symbol, a different API would have to be used
+   - As a consequence there is no certain way of validating a stock symbol, a different API would have to be used for that
 - The chosen date picker component is actually not to my liking
 - The chosen chart component has limits (or perhaps hidden functionality) regarding the layout. 
 Getting the chart window to display properly e.g. on small devices will require more work
